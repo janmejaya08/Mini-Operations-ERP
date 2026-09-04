@@ -1,0 +1,124 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite" // Can be switched to postgresql seamlessly via .env DATABASE_URL
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  OPERATIONS_USER
+  SALES_USER
+}
+
+enum WorkOrderStatus {
+  ASSIGNED
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum TransferStatus {
+  REQUESTED
+  DISPATCHED
+  RECEIVED
+}
+
+enum CustomerOrderStatus {
+  RESERVED
+  FULFILLED
+  CANCELLED
+}
+
+model User {
+  id           String      @id @default(uuid())
+  email        String      @unique
+  passwordHash String
+  name         String
+  role         Role
+  createdAt    DateTime    @default(now())
+  workOrders   WorkOrder[]
+}
+
+model Location {
+  id                  String           @id @default(uuid())
+  name                String           @unique
+  code                String           @unique
+  inventories         Inventory[]
+  workOrders          WorkOrder[]
+  transfersAsSource   StockTransfer[]  @relation("SourceLocation")
+  transfersAsDest     StockTransfer[]  @relation("DestinationLocation")
+  customerOrders      CustomerOrder[]
+}
+
+model Item {
+  id             String           @id @default(uuid())
+  sku            String           @unique
+  name           String
+  category       String
+  inventories    Inventory[]
+  workOrders     WorkOrder[]
+  transfers      StockTransfer[]
+  customerOrders CustomerOrder[]
+}
+
+model Inventory {
+  id               String   @id @default(uuid())
+  itemId           String
+  locationId       String
+  batch            String
+  physicalQuantity Int      @default(0)
+  reservedQuantity Int      @default(0)
+  item             Item     @relation(fields: [itemId], references: [id])
+  location         Location @relation(fields: [locationId], references: [id])
+  updatedAt        DateTime @updatedAt
+
+  @@unique([itemId, locationId, batch])
+}
+
+model WorkOrder {
+  id               String          @id @default(uuid())
+  workOrderNumber  String          @unique
+  itemId           String
+  locationId       String
+  requiredQuantity Int
+  assignedUserId   String
+  status           WorkOrderStatus @default(ASSIGNED)
+  createdAt        DateTime        @default(now())
+  
+  item             Item            @relation(fields: [itemId], references: [id])
+  location         Location        @relation(fields: [locationId], references: [id])
+  assignedUser     User            @relation(fields: [assignedUserId], references: [id])
+}
+
+model StockTransfer {
+  id                    String         @id @default(uuid())
+  transferNumber        String         @unique
+  sourceLocationId      String
+  destinationLocationId String
+  itemId                String
+  batch                 String
+  quantity              Int
+  status                TransferStatus @default(REQUESTED)
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+
+  sourceLocation        Location       @relation("SourceLocation", fields: [sourceLocationId], references: [id])
+  destinationLocation   Location       @relation("DestinationLocation", fields: [destinationLocationId], references: [id])
+  item                  Item           @relation(fields: [itemId], references: [id])
+}
+
+model CustomerOrder {
+  id          String              @id @default(uuid())
+  orderNumber String              @unique
+  itemId      String
+  locationId  String
+  batch       String
+  quantity    Int
+  status      CustomerOrderStatus @default(RESERVED)
+  createdAt   DateTime            @default(now())
+
+  item        Item                @relation(fields: [itemId], references: [id])
+  location    Location            @relation(fields: [locationId], references: [id])
+}
