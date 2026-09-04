@@ -33,18 +33,18 @@ A production-oriented, full-stack Mini Operations ERP built to manage multi-loca
    Customer order reservations execute inside isolated database transactions (`$transaction`), verifying real-time available stock before incrementing the reserved count to prevent race conditions when concurrent orders arrive.
 
 
--**cd backend
+-----------------------------------------------------------------------------------------------------
+-cd backend
 -npm install
 -npx prisma generate
 -npx prisma db push
 -npm run seed
 -npm run test # Runs all 5 mandatory test validations
--npm run dev  # Starts API on http://localhost:4000**
------------------------------------------------------------------------------------------------------
+-npm run dev  # Starts API on http://localhost:4000
 -**cd ../frontend
 -npm install
 -npm run dev  # Starts UI on http://localhost:5173
-**
+
 -------------------------------------------------------------------------------------------------------
 ---
 
