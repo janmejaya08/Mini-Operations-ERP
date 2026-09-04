@@ -1,4 +1,3 @@
-# Mini-Operations-ERP
 # Mini Operations ERP
 
 A production-oriented, full-stack Mini Operations ERP built to manage multi-location inventory, work order shortage checks, atomic two-phase stock transfers, and concurrency-safe customer order reservations.
