@@ -34,16 +34,16 @@ A production-oriented, full-stack Mini Operations ERP built to manage multi-loca
 
 
 -----------------------------------------------------------------------------------------------------
--cd backend
--npm install
--npx prisma generate
--npx prisma db push
--npm run seed
--npm run test # Runs all 5 mandatory test validations
--npm run dev  # Starts API on http://localhost:4000
--**cd ../frontend
--npm install
--npm run dev  # Starts UI on http://localhost:5173
+- cd backend
+- npm install
+- npx prisma generate
+- npx prisma db push
+- npm run seed
+- npm run test # Runs all 5 mandatory test validations
+- npm run dev  # Starts API on http://localhost:4000
+- **cd ../frontend
+- npm install
+- npm run dev  # Starts UI on http://localhost:5173
 
 -------------------------------------------------------------------------------------------------------
 ---
